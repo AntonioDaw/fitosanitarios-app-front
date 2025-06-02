@@ -1,0 +1,67 @@
+'use server';
+
+import { z } from 'zod';
+import { fetchTipos } from '@/app/helpers/api';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import { CreateFormState } from '../components/cultivos/CreateCultivoForm';
+
+const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ\s]+$/;
+
+const tipos = await fetchTipos();
+const idsValidos = tipos.map((t: any) => t.id);
+
+const schema = z.object({
+  nombre: z
+    .string()
+    .min(1, 'El nombre es obligatorio')
+    .regex(soloLetrasRegex, 'El nombre solo puede contener letras y espacios'),
+  tipo: z.coerce
+    .number()
+    .int()
+    .refine((id) => idsValidos.includes(id), {
+      message: 'El tipo seleccionado no es válido',
+    }),
+});
+
+export const createCultivo = async (
+  prevState: CreateFormState,
+  formData: FormData
+): Promise<CreateFormState> => {
+  const validatedFields = schema.safeParse({
+    nombre: formData.get('nombre'),
+    tipo: formData.get('tipo'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Campos inválidos',
+    };
+  }
+
+  // Renombrar tipo -> tipo_id para el backend
+  const cultivoData = {
+    nombre: validatedFields.data.nombre,
+    tipo_id: validatedFields.data.tipo,
+  };
+
+  try {
+    await fetch('http://192.168.0.17/api/cultivos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(cultivoData),
+    });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return {
+      errors: {},
+      message: 'Error en la base de datos: Fallo al crear cultivo',
+    };
+  }
+
+  revalidatePath('/dashboard/cultivos');
+  redirect('/dashboard/cultivos');
+};

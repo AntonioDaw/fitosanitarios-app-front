@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+.fondo-azul {
+  background-color: #007bff; /* azul bootstrap, por ejemplo */
+}
