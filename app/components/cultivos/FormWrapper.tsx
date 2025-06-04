@@ -2,27 +2,47 @@
 
 import { FC, useActionState } from 'react';
 import CreateCultivoForm, {
-    CreateFormState,
-    TipoCultivoField,
+  CreateFormState,
+  TipoCultivoField,
 } from './CreateCultivoForm';
-import { createCultivo } from '@/app/helpers/action';
 
-const FormWrapper: FC<{ tipos: TipoCultivoField[] }> = ({ tipos }) => {
-    const initialState: CreateFormState = {
-        errors: {},
-        message: null,
-    };
-
-    const [state, formAction] = useActionState<CreateFormState, FormData>(
-        createCultivo,
-        initialState
-    );
-
-    return (
-        <div>
-            <CreateCultivoForm tipos={tipos} action={formAction} state={state} />
-        </div>
-    );
+type CultivoFormWrapperProps = {
+  tipos: TipoCultivoField[];
+  action: (formData: FormData, id?:string ) => Promise<CreateFormState>;
+  initialValues?: {
+    nombre: string;
+    tipo_id: number | string;
+    
+  };
 };
 
-export default FormWrapper;
+const CultivoFormWrapper: FC<CultivoFormWrapperProps> = ({
+  tipos,
+  action,
+  initialValues,
+}) => {
+  const initialState: CreateFormState = {
+    errors: {},
+    message: null,
+  };
+
+  const adaptedAction = async (
+    _prevState: CreateFormState,
+    formData: FormData
+  ): Promise<CreateFormState> => {
+    return await action(formData);
+  };
+
+  const [state, formAction] = useActionState(adaptedAction, initialState);
+
+  return (
+    <CreateCultivoForm
+      tipos={tipos}
+      action={formAction}
+      state={state}
+      initialValues={initialValues}
+    />
+  );
+};
+
+export default CultivoFormWrapper;

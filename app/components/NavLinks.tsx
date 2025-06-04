@@ -1,7 +1,8 @@
 'use client'
 import Link from 'next/link';
-import { FaHome, FaBriefcase, FaUsers, FaBlackberry } from 'react-icons/fa';
+import { FaHome, FaBriefcase, FaUsers, FaBlackberry} from 'react-icons/fa';
 import { usePathname } from 'next/navigation';
+import { Sprout } from 'lucide-react';
 const links = [{
     name: "Dashboard",
     href: "/dashboard",
@@ -26,6 +27,14 @@ const links = [{
     icon: FaBlackberry
 
 },
+
+{
+    name: "Plantar",
+    href: "/dashboard/cultivos/plantar",
+    icon: Sprout
+
+},
+
 ]
 
 const NavLinks = () => {

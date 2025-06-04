@@ -11,6 +11,7 @@ type Item = {
   nombre: string
   icono_url: string
   tipo: string
+  esta_plantado: boolean
 }
 
 type Props = {
@@ -22,6 +23,7 @@ type Props = {
   setQuery: (value: string) => void
   onCreate?: () => void
   perPage?: number
+  onDelete?: () => void; 
 }
 
 export default function PaginatedTable(props: Props) {

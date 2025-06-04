@@ -10,6 +10,7 @@ type Cultivo = {
   nombre: string;
   icono_url: string;
   tipo: string;
+  esta_plantado: boolean
 };
 
 export default function CultivosPage() {
@@ -20,6 +21,7 @@ export default function CultivosPage() {
     setPage,
     query,
     setQuery,
+    refetch
   } = usePaginateFetch<Cultivo>(fetchTableCultivo);
 
   return (
@@ -32,7 +34,7 @@ export default function CultivosPage() {
           onPageChange={setPage}
           query={query}
           setQuery={setQuery}
-          onCreate={() => { }}
+          onDelete={refetch}
         />
       </div>
     </div>

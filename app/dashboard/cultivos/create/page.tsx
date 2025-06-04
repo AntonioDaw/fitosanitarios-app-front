@@ -1,4 +1,5 @@
 import FormWrapper from "@/app/components/cultivos/FormWrapper";
+import { createCultivo } from "@/app/helpers/crearCultivo";
 import { fetchTipos } from "@/app/helpers/api";
 import { bebas_Neue } from "@/app/ui/fonts";
 import { Breadcrumbs } from "anjrot-components";
@@ -20,7 +21,7 @@ const AñadirCultivo = async () => {
         />
         <div className="bg-white shadow-md rounded-lg p-6 sm:p-8">
           <h1 className="text-2xl font-bold mb-4 text-center">Nuevo Cultivo</h1>
-          <FormWrapper tipos={getTipos} />
+          <FormWrapper action={createCultivo} tipos={getTipos} />
         </div>
       </div>
     </main>

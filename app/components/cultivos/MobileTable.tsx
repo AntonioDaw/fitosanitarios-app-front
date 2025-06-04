@@ -3,9 +3,11 @@ import React from 'react'
 import Image from 'next/image'
 import SearchInput from '../SearchInput'
 import Link from 'next/link'
-import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa'
+import { FaEdit, FaPlus } from 'react-icons/fa'
+import DeleteButton from '../DeleteButton'
 
 type Item = {
+  esta_plantado: boolean
   id: number
   nombre: string
   icono_url: string
@@ -21,7 +23,9 @@ type Props = {
   setQuery: (value: string) => void
   onCreate?: () => void
   perPage?: number
+  onDelete?: () => void;
 }
+
 
 export default function MobileTable({
   data,
@@ -30,6 +34,7 @@ export default function MobileTable({
   onPageChange,
   query,
   setQuery,
+  onDelete
 }: Props) {
   return (
 
@@ -56,7 +61,7 @@ export default function MobileTable({
           >
             <div className="bg-white rounded-xl p-4 flex items-center gap-4 justify-between">
               {/* Icono + info */}
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col items-start gap-2">
                 <Image
                   src={item.icono_url}
                   alt={item.tipo}
@@ -64,26 +69,24 @@ export default function MobileTable({
                   height={40}
                   className="rounded object-contain"
                 />
-                <div>
-                  <p className="text-base font-semibold text-gray-800">{item.nombre}</p>
-                  <p className="text-sm text-gray-500">{item.tipo}</p>
-                </div>
+
+                <p className="text-base font-semibold text-gray-800 text-center">
+                  {item.nombre}
+                </p>
               </div>
 
               {/* Botones de acción */}
-              <div className="mt-6 flex justify-center gap-4">
+              <div className="mt-6 flex justify-center align-middle gap-4">
+                {!item.esta_plantado && (
                 <Link
                   className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-1 px-4 rounded transition"
                   href={`dashboard/cultivos/${item.id}/edit`}
                 >
                   <FaEdit className="w-5 h-5" />
                 </Link>
-                <Link
-                  className="bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-4 rounded transition"
-                  href={`dashboard/cultivos/${item.id}/edit`}
-                >
-                  <FaTrash className="w-5 h-5" />
-                </Link>
+                )}
+                <DeleteButton id={item.id} onDeleted={onDelete} />
+
               </div>
             </div>
 

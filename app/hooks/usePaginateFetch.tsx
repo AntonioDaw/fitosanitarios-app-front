@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 type FetchFunction<T> = (query?: string, page?: number) => Promise<{
   data: T[],
@@ -19,11 +19,13 @@ export function usePaginateFetch<T>(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
+  // 👇 Reutilizable, puedes usarlo externamente con el valor actual
+  const loadData = useCallback((overridePage?: number) => {
+    const targetPage = overridePage ?? page;
     setLoading(true);
     setError(null);
 
-    fetcher(query, page)
+    return fetcher(query, targetPage)
       .then(res => {
         setData(res.data);
         setTotalPages(res.pagination.last_page);
@@ -34,7 +36,11 @@ export function usePaginateFetch<T>(
       .finally(() => {
         setLoading(false);
       });
-  }, [query, page, fetcher]);
+  }, [fetcher, query, page]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   return {
     data,
@@ -45,5 +51,7 @@ export function usePaginateFetch<T>(
     query,
     setQuery,
     setPage,
+    refetch: () => loadData(),
   };
 }
+

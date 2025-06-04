@@ -3,12 +3,15 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import TopBarDesk from '../TopBarDesk'
 import Link from 'next/link'
+import DeleteButton from '../DeleteButton'
+import { FaEdit } from 'react-icons/fa'
 
 type Item = {
   id: number
   nombre: string
   icono_url: string
   tipo: string
+  esta_plantado: boolean
 }
 
 type Props = {
@@ -20,6 +23,7 @@ type Props = {
   setQuery: (value: string) => void
   onCreate?: () => void
   perPage?: number
+  onDelete?: () => void;
 }
 
 export default function DeskTable({
@@ -30,6 +34,7 @@ export default function DeskTable({
   query,
   setQuery,
   perPage = 10,
+  onDelete,
 }: Props) {
   const emptyRows = perPage - data.length > 0 ? perPage - data.length : 0
   const [selected, setSelected] = useState<Item | null>(null)
@@ -63,19 +68,17 @@ export default function DeskTable({
                 <p className="text-gray-300 mt-1">Tipo: {selected.tipo}</p>
               </div>
 
-              <div className="mt-6 flex justify-center gap-4">
-                <Link
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-1 px-4 rounded transition"
-                  href={`dashboard/cultivos/${selected.id}/edit`}
-                >
-                  Actualizar
-                </Link>
-                <Link
-                  className="bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-4 rounded transition"
-                  href={`dashboard/cultivos/${selected.id}/edit`}
-                >
-                  Borrar
-                </Link>
+              <div className="mt-6 flex justify-around gap-4">
+                {!selected.esta_plantado && (
+                  <Link
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-5 rounded transition"
+                    href={`cultivos/${selected.id}/edit`}
+                  >
+                    <FaEdit className="w-5 h-5" />
+                  </Link>
+                )}
+
+                <DeleteButton id={selected.id} onDeleted={onDelete} />
               </div>
             </>
           ) : (

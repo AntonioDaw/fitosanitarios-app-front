@@ -9,6 +9,7 @@ import { CreateFormState } from '../components/cultivos/CreateCultivoForm';
 const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ\s]+$/;
 
 const tipos = await fetchTipos();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const idsValidos = tipos.map((t: any) => t.id);
 
 const schema = z.object({
@@ -25,7 +26,6 @@ const schema = z.object({
 });
 
 export const createCultivo = async (
-  prevState: CreateFormState,
   formData: FormData
 ): Promise<CreateFormState> => {
   const validatedFields = schema.safeParse({

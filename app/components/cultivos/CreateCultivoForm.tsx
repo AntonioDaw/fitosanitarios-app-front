@@ -20,9 +20,13 @@ type CreateCultivoFormProps = {
   tipos: TipoCultivoField[];
   action: (formData: FormData) => void;
   state: CreateFormState;
+  initialValues?: {
+    nombre: string;
+    tipo_id: number | string;
+  };
 };
 
-const CreateCultivoForm: FC<CreateCultivoFormProps> = ({ tipos, state, action }) => {
+const CreateCultivoForm: FC<CreateCultivoFormProps> = ({ tipos, state, action, initialValues }) => {
 
 
 
@@ -36,7 +40,7 @@ const CreateCultivoForm: FC<CreateCultivoFormProps> = ({ tipos, state, action })
           id="nombre"
           name="nombre"
           type="text"
-          defaultValue=""
+          defaultValue={initialValues?.nombre?.toString() ?? ""}
           placeholder="variedad"
           className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
           required
@@ -53,7 +57,7 @@ const CreateCultivoForm: FC<CreateCultivoFormProps> = ({ tipos, state, action })
         <select
           id="tipo"
           name="tipo"
-          defaultValue=""
+          defaultValue={initialValues?.tipo_id?.toString() ?? ""}
           className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm md:text-base"
           required
         >
@@ -77,7 +81,7 @@ const CreateCultivoForm: FC<CreateCultivoFormProps> = ({ tipos, state, action })
         type="submit"
         className="w-full bg-green-600 text-white font-semibold py-2 px-4 rounded hover:bg-green-700 transition"
       >
-        Crear Cultivo
+        {initialValues ? 'Actualizar Cultivo' : 'Crear Cultivo'}
       </button>
     </form>
   );
