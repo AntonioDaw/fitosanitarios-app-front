@@ -1,10 +1,11 @@
 'use server';
 
 import { z } from 'zod';
-import { fetchTipos } from '@/app/helpers/api';
+import { fetchTipos } from '@/app/lib/api';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { CreateFormState } from '../components/cultivos/CreateCultivoForm';
+import { CreateFormState } from '@/app/components/cultivos/CreateCultivoForm';
+
 
 const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ\s]+$/;
 
@@ -25,12 +26,7 @@ const schema = z.object({
         }),
 });
 
-/**
- * Función para actualizar un cultivo por su id
- * @param id Identificador del cultivo a editar
- * @param formData FormData con campos nombre y tipo
- * @returns Estado con posibles errores o mensaje
- */
+
 export const updateCultivo = async (
     id: number,
     formData: FormData

@@ -1,6 +1,6 @@
 import FormWrapper from "@/app/components/cultivos/FormWrapper";
-import { createCultivo } from "@/app/helpers/crearCultivo";
-import { fetchTipos } from "@/app/helpers/api";
+import { createCultivo } from "@/app/lib/cultivos/crearCultivo";
+import { fetchTipos } from "@/app/lib/api";
 import { bebas_Neue } from "@/app/ui/fonts";
 import { Breadcrumbs } from "anjrot-components";
 
@@ -10,7 +10,7 @@ const breadCrumbs = [
 ];
 
 const AñadirCultivo = async () => {
-  const getTipos = await fetchTipos();
+  const tipos = await fetchTipos();
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-start px-4 py-8">
@@ -21,7 +21,7 @@ const AñadirCultivo = async () => {
         />
         <div className="bg-white shadow-md rounded-lg p-6 sm:p-8">
           <h1 className="text-2xl font-bold mb-4 text-center">Nuevo Cultivo</h1>
-          <FormWrapper action={createCultivo} tipos={getTipos} />
+          <FormWrapper action={createCultivo} tipos={tipos} />
         </div>
       </div>
     </main>

@@ -1,6 +1,6 @@
 import InfoCard from '@/app/components/InfoCard';
 import SectoresTable from '@/app/components/SectoresTable';
-import {fetchTableData, fetchTipos } from '@/app/helpers/api';
+import {fetchTableData, fetchTipos } from '@/app/lib/api';
 import { bebas_Neue } from '@/app/ui/fonts';
 
 

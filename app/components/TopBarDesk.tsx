@@ -5,19 +5,20 @@ import SearchInput from "./SearchInput";
 
 interface TopBarDeskProps {
     query: string;
+    tipoBarra?: string;
     setQuery: (value: string) => void;
 }
 
-const TopBarDesk: React.FC<TopBarDeskProps> = ({ query, setQuery }) => {
+const TopBarDesk: React.FC<TopBarDeskProps> = ({ query, setQuery, tipoBarra }) => {
     return (
         <div className="flex justify-between items-center mb-4">
-            <SearchInput
+            {<SearchInput
                 value={query}
                 onChange={setQuery}
-                placeholder="Buscar cultivo..."
-            />
+                placeholder={`Buscar ${tipoBarra}...`}
+            />}
             <Link
-                href="/dashboard/cultivos/create"
+                href={`/dashboard/${tipoBarra}s/create`}
                 className="px-5 py-2 rounded bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50"
             >
                 Crear

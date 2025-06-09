@@ -1,13 +1,9 @@
 import React from 'react';
+import { Sector } from '../lib/api';
 
 
 
-interface Sector {
-    numero_parcela: number;
-    parcela_nombre: string;
-    id: number;
-    numero_sector?: number;
-}
+
 
 interface SectoresTableProps {
     sectores: Sector[];

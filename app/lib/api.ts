@@ -1,37 +1,21 @@
-export interface Parcela {
-  numero_parcela: string | number;
-  nombre: string;
-}
+import { Tipo, Sector, Cultivo, Tratamiento, Producto } from "../types";
 
-export interface Sector {
-  id: number | string;
-  numero_sector: string | number;
-  parcela_nombre: string;
-}
 
-export interface Cultivo {
-  id: number;
-  nombre: string;
-  icono_url: string;
-  tipo: string;
-  tipo_id: number;
-  esta_plantado: boolean;
-}
 
-export const fetchTipos = async () => {
+export const fetchTipos = async ():Promise<Tipo[]> => {
   try {
-    const getCultivos = await fetch("http://192.168.0.17/api/tipos", {
+    const response = await fetch("http://192.168.0.17/api/tipos", {
       method: 'GET',
       headers: {
         "Content-Type": "application/json",
       },
     });
-    const result = await getCultivos.json();
+    const result = await response.json();
 
-    return result.data;
+     return result.data as Tipo[];
   } catch (error) {
     console.error('Error al obtener los tipos:', error);
-    return null;
+    return [];
   }
 };
 
@@ -48,6 +32,8 @@ export const fetchTableData = async (tipoId: number): Promise<Sector[]> => {
     return [];
   }
 };
+
+
 
 export const fetchTableCultivo = async (query?: string, currentPage?: number) => {
   try {
@@ -109,6 +95,23 @@ export const deleteCultivo = async (id: number) => {
   }
 
 };
+export const deleteTratamiento = async (id: number) => {
+  try {
+    // Construir la URL dinámicamente
+    const url = `http://192.168.0.17/api/tratamientos/${id}`;
+
+
+
+    await fetch(url, {
+      method: 'DELETE',
+      headers: { "Content-Type": "application/json" }
+    });
+  } catch (error) {
+    console.error('Error al obtener el taratmiento:', error);
+    return [];
+  }
+
+};
 export const plantarCultivo = async (cultivoId: number, sectorId: number) => {
   try {
     const response = await fetch(`/api/cultivos/${cultivoId}/plantar`, {
@@ -127,6 +130,7 @@ export const plantarCultivo = async (cultivoId: number, sectorId: number) => {
     const data = await response.json();
     console.log('Éxito:', data.message);
     return data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Error:', error.message);
     throw error;
@@ -160,3 +164,77 @@ export const fetchSectoresVacios = async () => {
     return [];
   }
 };
+
+export const fetchTratamientosTipo = async (tipoId: number): Promise<Tratamiento[]> => {
+  try {
+    const response = await fetch(`http://192.168.0.17/api/tratamientos/tipo/${tipoId}`, {
+      method: 'GET',
+      headers: { "Content-Type": "application/json" }
+    });
+    const result = await response.json();
+    return result.data as Tratamiento[];
+  } catch (error) {
+    console.error('Error al obtener los tratamientos:', error);
+    return [];
+  }
+};
+
+export const cambiarEstado = async (Id:number) => {
+ try {
+    await fetch(`http://192.168.0.17/api/tratamientos/${Id}/avanzar`, {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" }
+    });
+  } catch (error) {
+    console.error('Error al avanzar:', error);
+    return [];
+  }
+};
+
+export const fetchTratamiento = async (Id: number): Promise<Tratamiento> => {
+  try {
+    const response = await fetch(`http://192.168.0.17/api/tratamientos/${Id}`, {
+      method: 'GET',
+      headers: { "Content-Type": "application/json" }
+    });
+    const result = await response.json();
+    return result as Tratamiento;
+  } catch (error) {
+    console.error('Error al obtener tratamiento:', error);
+    return {} as Tratamiento;
+  }
+};
+
+export const fetchCultivos = async () => {
+  try {
+    const response = await fetch("http://192.168.0.17/api/listacultivos", {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+   const result = await response.json();
+    return result.data as Cultivo[];
+  } catch (error) {
+    console.error('Error al obtener los cultivos:', error);
+    return [];
+  }
+};
+
+export const fetchProductos = async () => {
+  try {
+    const response = await fetch("http://192.168.0.17/api/listaproductos", {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+   const result = await response.json();
+    return result.data as Producto[];
+  } catch (error) {
+    console.error('Error al obtener los productos:', error);
+    return [];
+  }
+};
+
+

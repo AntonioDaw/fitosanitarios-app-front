@@ -1,10 +1,10 @@
 'use server';
 
 import { z } from 'zod';
-import { fetchTipos } from '@/app/helpers/api';
+import { fetchTipos } from '@/app/lib/api';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { CreateFormState } from '../components/cultivos/CreateCultivoForm';
+import { CreateFormState } from '../../components/cultivos/CreateCultivoForm';
 
 const soloLetrasRegex = /^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ\s]+$/;
 

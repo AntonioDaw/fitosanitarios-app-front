@@ -50,7 +50,7 @@ export default function DeskTable({
   return (
 
     <div className="max-w-6xl mx-auto p-6">
-      <TopBarDesk query={query} setQuery={setQuery} />
+      <TopBarDesk query={query} setQuery={setQuery} tipoBarra='cultivo' />
       <div className="grid md:grid-cols-3 gap-6 items-stretch">
         {/* Card izquierda */}
         <div className="bg-slate-700 rounded-lg shadow-lg p-6 text-white h-full flex flex-col justify-between">

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { fetchTableCultivo } from '@/app/helpers/api';
+import { fetchTableCultivo } from '@/app/lib/api';
 import PaginatedTable from '@/app/components/PaginatedTable';
 import { usePaginateFetch } from '@/app/hooks/usePaginateFetch';
 

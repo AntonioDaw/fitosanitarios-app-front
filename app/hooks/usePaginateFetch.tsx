@@ -19,7 +19,7 @@ export function usePaginateFetch<T>(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  // 👇 Reutilizable, puedes usarlo externamente con el valor actual
+  
   const loadData = useCallback((overridePage?: number) => {
     const targetPage = overridePage ?? page;
     setLoading(true);

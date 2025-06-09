@@ -12,13 +12,13 @@ const links = [{
 {
     name: "Usuarios",
     href: "/dashboard/usuarios",
-    icon: FaBriefcase
+    icon: FaUsers
 
 },
 {
-    name: "Clientes",
-    href: "/dashboard/clientes",
-    icon: FaUsers
+    name: "Tratamientos",
+    href: "/dashboard/tratamientos",
+    icon: FaBriefcase
 
 },
 {

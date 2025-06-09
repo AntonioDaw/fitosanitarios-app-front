@@ -1,5 +1,5 @@
 'use client';
-import { fetchCultivosTipos, fetchSectoresVacios, fetchTipos } from '@/app/helpers/api';
+import { fetchCultivosTipos, fetchSectoresVacios, fetchTipos } from '@/app/lib/api';
 import React, { useState, useEffect } from 'react';
 
 type TipoCultivo = {
@@ -68,10 +68,10 @@ export default function PlantarFormConTipos() {
             const data = await res.json();
             setMensaje(data.message);
 
-             // 💡 Recargar los sectores disponibles
+
         fetchSectoresVacios().then(setSectores);
 
-        // 🧼 Reset opcional de selects
+
         setTipoSeleccionado(null);
         setCultivoSeleccionado(null);
         setSectorSeleccionado(null);

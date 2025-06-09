@@ -1,13 +1,14 @@
 'use client';
 import { FaTrash } from 'react-icons/fa';
-import { deleteCultivo } from '../helpers/api';
+import { deleteCultivo } from '../lib/api';
 
 type DeleteButtonProps = {
   id: number;
-  onDeleted?: () => void; // función opcional que se llama después de borrar
+  onDeleted?: () => void;
+  className?:string // función opcional que se llama después de borrar
 };
 
-export default function DeleteButton({ id, onDeleted }: DeleteButtonProps) {
+export default function DeleteButton({ id, onDeleted,className }: DeleteButtonProps) {
   const handleDelete = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -22,7 +23,7 @@ export default function DeleteButton({ id, onDeleted }: DeleteButtonProps) {
     <form onSubmit={handleDelete}>
       <button
         type="submit"
-        className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-5 rounded transition"
+        className={className ?? "bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-5 rounded transition"}
       >
         <FaTrash className="w-5 h-5" />
       </button>
