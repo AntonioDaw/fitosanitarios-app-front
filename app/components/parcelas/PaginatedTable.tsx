@@ -1,21 +1,19 @@
 'use client'
 import React from 'react'
 
-import MobileTable from './cultivos/MobileTable'
-import DeskTable from './cultivos/DeskTable'
-import { useIsMobile } from '../hooks/useIsMobile'
+
+import { useIsMobile } from '../../hooks/useIsMobile'
+import { Parcela } from '@/app/types'
+import MobileTable from './MobileTable'
+import DeskTable from './DeskTable'
 
 
-type Item = {
-  id: number
-  nombre: string
-  icono_url: string
-  tipo: string
-  esta_plantado: boolean
-}
+
+
+
 
 type Props = {
-  data: Item[]
+  data: Parcela[]
   page: number
   totalPages: number
   onPageChange: (page: number) => void

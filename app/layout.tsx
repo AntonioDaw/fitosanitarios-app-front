@@ -1,16 +1,21 @@
-import { FC, PropsWithChildren } from 'react';
-import '@/app/ui/globals.css';
+import './ui/globals.css';
 import { roboto } from './ui/fonts';
+import { SessionProvider } from 'next-auth/react';
+import { auth } from "@/auth";
 
-const RootLayout: FC<PropsWithChildren> = ({ children }) => {
-    return (
-        <html>
-            <body className={`${roboto.className} antialiased`}>
-            {children}
-        </body>
 
-        </html >
-    );
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
+  console.log('EY', session)
+  return (
+    <html lang="es">
+      <body className={roboto.className}>
+        <SessionProvider
+        >
+          {children}
+
+        </SessionProvider>
+      </body>
+    </html>
+  );
 }
-
-export default RootLayout

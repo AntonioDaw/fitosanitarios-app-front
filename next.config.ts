@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'http',
-        hostname: '192.168.0.17',
+        hostname: 'localhost',
         pathname: '/**', // Ruta que usas para las imágenes
       },
     ],

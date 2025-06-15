@@ -1,5 +1,6 @@
 import React from 'react';
-import { Sector } from '../lib/api';
+import { Sector } from '../types';
+
 
 
 

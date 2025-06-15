@@ -1,7 +1,7 @@
 import React from 'react';
 import Logo from './Logo';
 import NavLinks from './NavLinks';
-import { FaPowerOff } from 'react-icons/fa';
+import LogoutButton from './logoutButton';
 
 const SideNav = () => {
     return (
@@ -16,11 +16,7 @@ bg-slate-900 p-4 md:h-40'>
 md:flex-col md:space-x-0 md:space-y-2'>
                 <NavLinks />
                 <div className='hidden h-auto w-full grow md:block'></div>
-                <a href="" className='flex h-[48px] grow items-center justify-center gap-2
-rounded-md bg-slate-500 p-3 text-lg text-white font-bold hover:bg-slate-400 hover:text-white md:flex-none md:justify-start md:p-2 md:px-3'>
-                    <FaPowerOff />
-                    <p className='hidden md:block'>Logout</p>
-                </a>
+               <LogoutButton/>
 
             </div>
         </div>

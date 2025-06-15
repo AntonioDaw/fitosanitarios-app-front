@@ -2,16 +2,11 @@
 
 import React from 'react';
 import { fetchTableCultivo } from '@/app/lib/api';
-import PaginatedTable from '@/app/components/PaginatedTable';
 import { usePaginateFetch } from '@/app/hooks/usePaginateFetch';
+import PaginatedTableCultivo from '@/app/components/cultivos/PaginatedTable';
+import { Cultivo } from '@/app/types';
 
-type Cultivo = {
-  id: number;
-  nombre: string;
-  icono_url: string;
-  tipo: string;
-  esta_plantado: boolean
-};
+
 
 export default function CultivosPage() {
   const {
@@ -27,7 +22,7 @@ export default function CultivosPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white-50">
       <div className="w-full">
-        <PaginatedTable
+        <PaginatedTableCultivo
           data={data}
           page={page}
           totalPages={totalPages}

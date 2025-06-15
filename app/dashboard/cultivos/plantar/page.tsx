@@ -1,5 +1,5 @@
 'use client';
-import { fetchCultivosTipos, fetchSectoresVacios, fetchTipos } from '@/app/lib/api';
+import { fetchCultivosTipos, fetchSectoresVacios, fetchTipos, plantarCultivo } from '@/app/lib/api';
 import React, { useState, useEffect } from 'react';
 
 type TipoCultivo = {
@@ -52,31 +52,16 @@ export default function PlantarFormConTipos() {
         }
 
         try {
-            const res = await fetch(`http://192.168.0.17/api/cultivos/plantar/${cultivoSeleccionado}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ sector_id: sectorSeleccionado }),
-            });
-
-            if (!res.ok) {
-                const errorData = await res.json();
-                throw new Error(errorData.message || 'Error al plantar cultivo');
-            }
-
-            const data = await res.json();
+            const data = await plantarCultivo(cultivoSeleccionado, sectorSeleccionado);
             setMensaje(data.message);
 
+            fetchSectoresVacios().then(setSectores);
 
-        fetchSectoresVacios().then(setSectores);
+            setTipoSeleccionado(null);
+            setCultivoSeleccionado(null);
+            setSectorSeleccionado(null);
+            setCultivos([]);
 
-
-        setTipoSeleccionado(null);
-        setCultivoSeleccionado(null);
-        setSectorSeleccionado(null);
-        setCultivos([]);
-        
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             setMensaje(error.message);
@@ -163,3 +148,5 @@ export default function PlantarFormConTipos() {
         </div>
     );
 }
+
+

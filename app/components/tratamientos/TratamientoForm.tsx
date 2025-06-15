@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { createTratamiento } from '@/app/lib/tratamientos/crearTratamiento';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface Cultivo {
     id: number;
@@ -13,29 +13,66 @@ interface Producto {
     id: number;
     nombre: string;
 }
+
 interface Tipos {
     id: number;
     nombre: string;
+}
+
+interface InitialData {
+    descripcion?: string;
+    tipo_id?: number;
+    cultivos?: number[];
+    productos?: { id: number; cantidad_por_100_litros: number }[];
 }
 
 interface TratamientoFormProps {
     cultivosDisponibles: Cultivo[];
     productosDisponibles: Producto[];
     tiposDisponibles: Tipos[];
+    action: (formData: FormData) => Promise<void>;
+    initialData?: InitialData;
 }
 
-export default function TratamientoForm({ cultivosDisponibles, productosDisponibles, tiposDisponibles }: TratamientoFormProps) {
-    
+export default function TratamientoForm({
+    cultivosDisponibles,
+    productosDisponibles,
+    tiposDisponibles,
+    action,
+    initialData,
+}: TratamientoFormProps) {
     const [errores, setErrores] = useState<string[]>([]);
     const [exito, setExito] = useState<string>('');
-    const [descripcion, setDescripcion] = useState('');
-    const [cultivosSeleccionados, setCultivosSeleccionados] = useState<number[]>([]);
-    const [productosSeleccionados, setProductosSeleccionados] = useState<number[]>([]);
+    const [descripcion, setDescripcion] = useState(initialData?.descripcion ?? '');
+    const [cultivosSeleccionados, setCultivosSeleccionados] = useState<number[]>(initialData?.cultivos ?? []);
+    const [productosSeleccionados, setProductosSeleccionados] = useState<number[]>(
+        initialData?.productos?.map(p => p.id) ?? []
+    );
     const [showCultivosDropdown, setShowCultivosDropdown] = useState(false);
     const [showProductosDropdown, setShowProductosDropdown] = useState(false);
     const [tipos] = useState(tiposDisponibles);
-    const [tipoSeleccionado, setTipoSeleccionado] = useState<number | null>(null);
-    const [cantidad_por_100_litros, setCantidadesPorLitro] = useState<{ [productoId: number]: number }>({});
+    const [tipoSeleccionado, setTipoSeleccionado] = useState<number | null>(initialData?.tipo_id ?? null);
+    const [cantidad_por_100_litros, setCantidadesPorLitro] = useState<{ [productoId: number]: number }>(() => {
+        const cantidades: { [id: number]: number } = {};
+        initialData?.productos?.forEach(p => {
+            cantidades[p.id] = p.cantidad_por_100_litros;
+        });
+        return cantidades;
+    });
+    // Aquí abrimos dropdown cultivos en edición o tras error en creación con cultivos seleccionados
+    useEffect(() => {
+        if ((initialData || errores.length > 0) && cultivosSeleccionados.length > 0) {
+            setShowCultivosDropdown(true);
+        }
+    }, [initialData, errores, cultivosSeleccionados]);
+
+    // Igual para productos
+    useEffect(() => {
+        if ((initialData || errores.length > 0) && productosSeleccionados.length > 0) {
+            setShowProductosDropdown(true);
+        }
+    }, [initialData, errores, productosSeleccionados]);
+
     const handleCantidadChange = (id: number, valor: string) => {
         const cantidad = parseFloat(valor);
         if (!isNaN(cantidad)) {
@@ -48,7 +85,12 @@ export default function TratamientoForm({ cultivosDisponibles, productosDisponib
             });
         }
     };
-    const toggleSeleccion = (id: number, selectedArray: number[], setSelectedArray: React.Dispatch<React.SetStateAction<number[]>>) => {
+
+    const toggleSeleccion = (
+        id: number,
+        selectedArray: number[],
+        setSelectedArray: React.Dispatch<React.SetStateAction<number[]>>
+    ) => {
         if (selectedArray.includes(id)) {
             setSelectedArray(selectedArray.filter(i => i !== id));
         } else {
@@ -57,30 +99,35 @@ export default function TratamientoForm({ cultivosDisponibles, productosDisponib
     };
 
     const formAction = async (formData: FormData) => {
-        const response = await createTratamiento(formData);
+        const response = await action(formData);
 
-        if (!response.success) {
-            setErrores(Object.values(response.errors || {}).flat());
+        if ((response as any)?.success === false) {
+            const errores = Object.values((response as any).errors || {}).flat();
+            setErrores(errores.filter((e): e is string => typeof e === 'string'));
             setExito('');
             return;
         }
 
-        
         setErrores([]);
-        setExito('Tratamiento creado correctamente.');
+        setExito('Tratamiento guardado correctamente.');
 
-        
-        setDescripcion('');
-        setTipoSeleccionado(null);
-        setCultivosSeleccionados([]);
-        setProductosSeleccionados([]);
-        setCantidadesPorLitro({});
-        setShowCultivosDropdown(false);
-        setShowProductosDropdown(false);
+        if (!initialData) {
+            setDescripcion('');
+            setTipoSeleccionado(null);
+            setCultivosSeleccionados([]);
+            setProductosSeleccionados([]);
+            setCantidadesPorLitro({});
+            setShowCultivosDropdown(false);
+            setShowProductosDropdown(false);
+        }
     };
+
     return (
         <form action={formAction} className="max-w-4xl mx-auto bg-green-50 p-8 rounded-2xl shadow-xl border border-green-200 space-y-6">
-            <h2 className="text-2xl font-bold text-green-800 text-center mb-4">Crear Tratamiento</h2>
+            <h2 className="text-2xl font-bold text-green-800 text-center mb-4">
+                {initialData ? 'Editar Tratamiento' : 'Crear Tratamiento'}
+            </h2>
+
             {errores.length > 0 && (
                 <div className="bg-red-100 border border-red-300 text-red-800 rounded p-4">
                     <ul className="list-disc pl-5">
@@ -96,6 +143,8 @@ export default function TratamientoForm({ cultivosDisponibles, productosDisponib
                     {exito}
                 </div>
             )}
+
+            {/* Descripción */}
             <div>
                 <label htmlFor="descripcion" className="block font-semibold text-green-900 mb-1">Descripción</label>
                 <textarea
@@ -109,6 +158,7 @@ export default function TratamientoForm({ cultivosDisponibles, productosDisponib
                 />
             </div>
 
+            {/* Tipo */}
             <select
                 id="tipo"
                 name="tipo"
@@ -116,7 +166,7 @@ export default function TratamientoForm({ cultivosDisponibles, productosDisponib
                 onChange={(e) => {
                     const tipo = e.target.value ? parseInt(e.target.value) : null;
                     setTipoSeleccionado(tipo);
-                    setCultivosSeleccionados([]); // Limpia si cambia de tipo
+                    setCultivosSeleccionados([]);
                 }}
                 className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm md:text-base"
                 required
@@ -129,14 +179,12 @@ export default function TratamientoForm({ cultivosDisponibles, productosDisponib
                 ))}
             </select>
 
-
             {/* Cultivos */}
             <button
                 type="button"
                 onClick={() => tipoSeleccionado && setShowCultivosDropdown(!showCultivosDropdown)}
                 disabled={!tipoSeleccionado}
-                className={`w-full border bg-green-100 text-green-900 rounded px-3 py-2 text-left flex justify-between items-center ${tipoSeleccionado ? 'hover:bg-green-200 cursor-pointer' : 'cursor-not-allowed opacity-60'
-                    }`}
+                className={`w-full border bg-green-100 text-green-900 rounded px-3 py-2 text-left flex justify-between items-center ${tipoSeleccionado ? 'hover:bg-green-200 cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
             >
                 {cultivosSeleccionados.length > 0
                     ? `${cultivosSeleccionados.length} seleccionados`
@@ -162,9 +210,7 @@ export default function TratamientoForm({ cultivosDisponibles, productosDisponib
                                         onChange={() => toggleSeleccion(cultivo.id, cultivosSeleccionados, setCultivosSeleccionados)}
                                         className="mr-2 accent-green-600"
                                     />
-
                                     {cultivo.nombre}
-
                                 </label>
                             ))}
                     </div>
@@ -213,15 +259,15 @@ export default function TratamientoForm({ cultivosDisponibles, productosDisponib
                                             className="w-25 border border-green-300 bg-green-50 rounded px-2 py-1 text-right text-sm justify-self-end ml-auto"
                                             required
                                         />
-
                                     )}
                                 </label>
-
                             ))}
                         </div>
                     </div>
                 )}
             </div>
+
+            {/* Productos serializados */}
             <input
                 type="hidden"
                 name="productos"
@@ -232,14 +278,16 @@ export default function TratamientoForm({ cultivosDisponibles, productosDisponib
                     }))
                 )}
             />
+
             <div className="text-center">
                 <button
                     type="submit"
                     className="bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition font-semibold shadow"
                 >
-                    Crear Tratamiento
+                    {initialData ? 'Actualizar Tratamiento' : 'Crear Tratamiento'}
                 </button>
             </div>
         </form>
     );
 }
+

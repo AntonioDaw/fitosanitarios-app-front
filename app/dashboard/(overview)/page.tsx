@@ -8,6 +8,7 @@ import { bebas_Neue } from '@/app/ui/fonts';
 
 
 const Dashboard = async () => {
+  
   const cultivos = await fetchTipos();
   const sectoresPorCultivo = await Promise.all(
     cultivos.map((cultivo: { id: number; }) => fetchTableData(cultivo.id))

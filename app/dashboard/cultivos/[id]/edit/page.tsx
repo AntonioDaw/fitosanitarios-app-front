@@ -11,6 +11,7 @@ type PageProps = {
         id: number;
     };
 };
+
 const EditCultivoPage = async ({ params }: PageProps) => {
     const { id } = await params;
     const tipos = await fetchTipos();

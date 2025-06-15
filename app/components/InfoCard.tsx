@@ -11,7 +11,7 @@ interface InfoCardProps {
 const InfoCard: React.FC<InfoCardProps> = ({
   title,
   image_url,
-  bgColor = 'bg-slate-700',
+  bgColor = 'bg-gradient-to-r from-slate-600 to-slate-800 text-white rounded-t-xl',
   className = '',
 }) => {
   return (

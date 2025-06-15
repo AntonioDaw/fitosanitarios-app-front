@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { fetchCultivos, fetchProductos, fetchTipos } from '@/app/lib/api';
+import { fetchCultivos, fetchProductos, fetchTipos, getHeaders } from '@/app/lib/api';
 import { getTratamientoSchema } from './tratamientoSchema';
 
 export type UpdateTratamientoResponse =
@@ -62,11 +62,13 @@ export const updateTratamiento = async (
       message: 'Hay errores en el formulario',
     };
   }
-
+console.log('datos:', result)
+console.log(result.data.productos[0])
   try {
-    await fetch(`http://192.168.0.17/api/tratamientos/${id}`, {
+    const headers = await getHeaders()
+    await fetch(`${process.env.LARAVEL_API_URL}/api/tratamientos/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({
         descripcion: result.data.descripcion,
         tipo_id: result.data.tipo,

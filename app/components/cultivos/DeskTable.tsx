@@ -78,7 +78,7 @@ export default function DeskTable({
                   </Link>
                 )}
 
-                <DeleteButton id={selected.id} onDeleted={onDelete} />
+                <DeleteButton id={selected.id} onDeleted={onDelete} tipo={"Cultivo"} />
               </div>
             </>
           ) : (

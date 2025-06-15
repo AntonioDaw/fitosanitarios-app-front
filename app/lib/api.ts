@@ -1,18 +1,37 @@
-import { Tipo, Sector, Cultivo, Tratamiento, Producto } from "../types";
+'use server'
+import { auth } from "@/auth";
+import { Tipo, Sector, Cultivo, Tratamiento, Producto, Parcela, Aplicacion } from "../types";
 
+/** Obtiene los headers con el token actual del usuario */
+export const getHeaders = async () => {
+  const session = await auth();
+  const token = session?.user?.token ?? "";
+  return {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+};
 
+/** Wrapper genérico para fetch con autenticación */
+export const fetchWithAuth = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+  const headers = await getHeaders();
+  return fetch(input, {
+    ...init,
+    headers: {
+      ...headers,
+      ...(init?.headers || {}),
+    },
+  });
+};
 
-export const fetchTipos = async ():Promise<Tipo[]> => {
+// ─── TIPOS ──────────────────────────────────────────────
+
+export const fetchTipos = async (): Promise<Tipo[]> => {
   try {
-    const response = await fetch("http://192.168.0.17/api/tipos", {
-      method: 'GET',
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetchWithAuth(`http://localhost/api/tipos`);
     const result = await response.json();
-
-     return result.data as Tipo[];
+    return result.data as Tipo[];
   } catch (error) {
     console.error('Error al obtener los tipos:', error);
     return [];
@@ -21,36 +40,24 @@ export const fetchTipos = async ():Promise<Tipo[]> => {
 
 export const fetchTableData = async (tipoId: number): Promise<Sector[]> => {
   try {
-    const response = await fetch(`http://192.168.0.17/api/sectores/cultivos/${tipoId}`, {
-      method: 'GET',
-      headers: { "Content-Type": "application/json" }
-    });
+    const response = await fetchWithAuth(`http://localhost/api/sectores/cultivos/${tipoId}`);
     const result = await response.json();
     return result.data as Sector[];
   } catch (error) {
-    console.error('Error al obtener los sectores:', error);
+    console.error('Error al obtener sectores:', error);
     return [];
   }
 };
 
-
-
 export const fetchTableCultivo = async (query?: string, currentPage?: number) => {
   try {
-    // Construir la URL dinámicamente
-    let url = 'http://192.168.0.17/api/cultivos';
+    let url = `http://localhost/api/cultivos`;
     const params = new URLSearchParams();
-
     if (query) params.append('search', query);
     if (currentPage) params.append('page', currentPage.toString());
+    if (params.toString()) url += `?${params.toString()}`;
 
-    if (params.toString()) {
-      url += `?${params.toString()}`;
-    }
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: { "Content-Type": "application/json" }
-    });
+    const response = await fetchWithAuth(url);
     const result = await response.json();
     return result;
   } catch (error) {
@@ -59,66 +66,71 @@ export const fetchTableCultivo = async (query?: string, currentPage?: number) =>
   }
 };
 
-export const fetchCultivo = async (id: number) => {
+export const fetchCultivo = async (id: number): Promise<Cultivo | null> => {
   try {
-    // Construir la URL dinámicamente
-    const url = `http://192.168.0.17/api/cultivos/${id}`;
-
-
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: { "Content-Type": "application/json" }
-    });
+    const response = await fetchWithAuth(`http://localhost/api/cultivos/${id}`);
     const result = await response.json();
-    return result;
+    return result.data as Cultivo;
   } catch (error) {
     console.error('Error al obtener el cultivo:', error);
-    return [];
+    return null;
   }
 };
 
 export const deleteCultivo = async (id: number) => {
   try {
-    // Construir la URL dinámicamente
-    const url = `http://192.168.0.17/api/cultivos/${id}`;
-
-
-
-    await fetch(url, {
-      method: 'DELETE',
-      headers: { "Content-Type": "application/json" }
-    });
+    await fetchWithAuth(`http://localhost/api/cultivos/${id}`, { method: 'DELETE' });
   } catch (error) {
-    console.error('Error al obtener el cultivo:', error);
-    return [];
+    console.error('Error al borrar el cultivo:', error);
   }
-
 };
+
 export const deleteTratamiento = async (id: number) => {
   try {
-    // Construir la URL dinámicamente
-    const url = `http://192.168.0.17/api/tratamientos/${id}`;
-
-
-
-    await fetch(url, {
-      method: 'DELETE',
-      headers: { "Content-Type": "application/json" }
-    });
+    await fetchWithAuth(`http://localhost/api/tratamientos/${id}`, { method: 'DELETE' });
   } catch (error) {
-    console.error('Error al obtener el taratmiento:', error);
-    return [];
+    console.error('Error al borrar el tratamiento:', error);
   }
-
 };
-export const plantarCultivo = async (cultivoId: number, sectorId: number) => {
+
+export const deleteProducto = async (id: number) => {
   try {
-    const response = await fetch(`/api/cultivos/${cultivoId}/plantar`, {
+    await fetchWithAuth(`http://localhost/api/productos/${id}`, { method: 'DELETE' });
+  } catch (error) {
+    console.error('Error al borrar el producto:', error);
+  }
+};
+
+export const deleteParcela = async (id: number) => {
+  try {
+    await fetchWithAuth(`http://localhost/api/parcelas/${id}`, { method: 'DELETE' });
+  } catch (error) {
+    console.error('Error al borrar la parcela:', error);
+  }
+};
+
+export const deleteSector = async (id: number) => {
+  try {
+    await fetchWithAuth(`http://localhost/api/sectors/${id}`, { method: 'DELETE' });
+  } catch (error) {
+    console.error('Error al borrar el sector:', error);
+  }
+};
+
+export const deleteAplicacion = async (id: number) => {
+  try {
+    await fetchWithAuth(`http://localhost/api/aplicaciones/${id}`, { method: 'DELETE' });
+  } catch (error) {
+    console.error('Error al borrar la aplicación:', error);
+  }
+};
+
+export const plantarCultivo = async (cultivoId: number, sectorId: number) => {
+  const headers = await getHeaders();
+  try {
+    const response = await fetch(`http://localhost/api/cultivos/plantar/${cultivoId}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({ sector_id: sectorId }),
     });
 
@@ -137,66 +149,53 @@ export const plantarCultivo = async (cultivoId: number, sectorId: number) => {
   }
 
 }
+
 export const fetchCultivosTipos = async (tipoId: number) => {
   try {
-    const response = await fetch(`http://192.168.0.17/api/tipos/${tipoId}/cultivos`, {
-      method: 'GET',
-      headers: { "Content-Type": "application/json" }
-    });
+    const response = await fetchWithAuth(`http://localhost/api/tipos/${tipoId}/cultivos`);
     const result = await response.json();
     return result.data as Cultivo[];
   } catch (error) {
-    console.error('Error al obtener los cultivos:', error);
+    console.error('Error al obtener los cultivos por tipo:', error);
     return [];
   }
 };
 
 export const fetchSectoresVacios = async () => {
   try {
-    const response = await fetch('http://192.168.0.17/api/sectores/vacios', {
-      method: 'GET',
-      headers: { "Content-Type": "application/json" }
-    });
+    const response = await fetchWithAuth(`http://localhost/api/sectores/vacios`);
     const result = await response.json();
     return result.data as Sector[];
   } catch (error) {
-    console.error('Error al obtener los cultivos:', error);
+    console.error('Error al obtener sectores vacíos:', error);
     return [];
   }
 };
 
 export const fetchTratamientosTipo = async (tipoId: number): Promise<Tratamiento[]> => {
   try {
-    const response = await fetch(`http://192.168.0.17/api/tratamientos/tipo/${tipoId}`, {
-      method: 'GET',
-      headers: { "Content-Type": "application/json" }
-    });
+    const response = await fetchWithAuth(`http://localhost/api/tratamientos/tipo/${tipoId}`);
     const result = await response.json();
     return result.data as Tratamiento[];
   } catch (error) {
-    console.error('Error al obtener los tratamientos:', error);
+    console.error('Error al obtener los tratamientos por tipo:', error);
     return [];
   }
 };
 
-export const cambiarEstado = async (Id:number) => {
- try {
-    await fetch(`http://192.168.0.17/api/tratamientos/${Id}/avanzar`, {
+export const cambiarEstado = async (Id: number) => {
+  try {
+    await fetchWithAuth(`http://localhost/api/tratamientos/${Id}/avanzar`, {
       method: 'POST',
-      headers: { "Content-Type": "application/json" }
     });
   } catch (error) {
-    console.error('Error al avanzar:', error);
-    return [];
+    console.error('Error al avanzar estado del tratamiento:', error);
   }
 };
 
 export const fetchTratamiento = async (Id: number): Promise<Tratamiento> => {
   try {
-    const response = await fetch(`http://192.168.0.17/api/tratamientos/${Id}`, {
-      method: 'GET',
-      headers: { "Content-Type": "application/json" }
-    });
+    const response = await fetchWithAuth(`http://localhost/api/tratamientos/${Id}`);
     const result = await response.json();
     return result as Tratamiento;
   } catch (error) {
@@ -205,36 +204,121 @@ export const fetchTratamiento = async (Id: number): Promise<Tratamiento> => {
   }
 };
 
+export const fetchTratamientos = async () => {
+  try {
+    const response = await fetchWithAuth(`http://localhost/api/tratamientos`);
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Error al obtener tratamientos:', error);
+    return [];
+  }
+};
+
 export const fetchCultivos = async () => {
   try {
-    const response = await fetch("http://192.168.0.17/api/listacultivos", {
-      method: 'GET',
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-   const result = await response.json();
+    const response = await fetchWithAuth(`http://localhost/api/listacultivos`);
+    const result = await response.json();
     return result.data as Cultivo[];
   } catch (error) {
-    console.error('Error al obtener los cultivos:', error);
+    console.error('Error al obtener cultivos:', error);
     return [];
   }
 };
 
 export const fetchProductos = async () => {
   try {
-    const response = await fetch("http://192.168.0.17/api/listaproductos", {
-      method: 'GET',
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-   const result = await response.json();
+    const response = await fetchWithAuth(`http://localhost/api/listaproductos`);
+    const result = await response.json();
     return result.data as Producto[];
   } catch (error) {
-    console.error('Error al obtener los productos:', error);
+    console.error('Error al obtener productos:', error);
     return [];
   }
 };
 
+export const fetchProducto = async (Id: number): Promise<Producto> => {
+  try {
+    const response = await fetchWithAuth(`http://localhost/api/productos/${Id}`);
+    const result = await response.json();
+    return result as Producto;
+  } catch (error) {
+    console.error('Error al obtener producto:', error);
+    return {} as Producto;
+  }
+};
+
+export const fetchParcela = async (Id: number): Promise<Parcela> => {
+  try {
+    const response = await fetchWithAuth(`http://localhost/api/parcelas/${Id}`);
+    const result = await response.json();
+    return result.data as Parcela;
+  } catch (error) {
+    console.error('Error al obtener parcela:', error);
+    return {} as Parcela;
+  }
+};
+
+export const fetchParcelas = async () => {
+  try {
+    const response = await fetchWithAuth(`http://localhost/api/parcelas`);
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Error al obtener parcelas:', error);
+    return [];
+  }
+};
+
+export const fetchAplicacion = async (Id: number): Promise<Aplicacion> => {
+  try {
+    const response = await fetchWithAuth(`http://localhost/api/aplicaciones/${Id}`);
+    const result = await response.json();
+    return result as Aplicacion;
+  } catch (error) {
+    console.error('Error al obtener aplicación:', error);
+    return {} as Aplicacion;
+  }
+};
+
+export const fetchTratamientosForm = async (): Promise<Tratamiento[]> => {
+  try {
+    const response = await fetchWithAuth(`http://localhost/api/tratamientos/form`);
+    const result = await response.json();
+    return result.data as Tratamiento[];
+  } catch (error) {
+    console.error('Error al obtener tratamientos para formulario:', error);
+    return [];
+  }
+};
+
+export const fetchSectoresPorTipo = async (tipo_id: number) => {
+  const headers = await getHeaders();
+
+  const res = await fetch(`http://localhost/api/sectores/cultivos/${tipo_id}`, {
+    method: 'GET',
+    headers,
+  });
+
+  if (!res.ok) {
+    throw new Error('Error cargando sectores');
+  }
+
+  const data = await res.json();
+  return data.data; 
+};
+
+export async function accionAplicacion(id: number, accion: 'aprobar' | 'rechazar') {
+  const headers = await getHeaders();
+  const url = `http://localhost/api/aplicaciones/${accion}/${id}`;
+
+  const res = await fetch(url, { method: 'POST',headers });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || `Error al ${accion} la aplicación`);
+  }
+
+  return await res.json();
+}
 

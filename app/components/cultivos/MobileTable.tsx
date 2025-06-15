@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { FaEdit, FaPlus } from 'react-icons/fa'
 import DeleteButton from '../DeleteButton'
 
-type Item = {
+type T = {
   esta_plantado: boolean
   id: number
   nombre: string
@@ -15,7 +15,7 @@ type Item = {
 }
 
 type Props = {
-  data: Item[]
+  data: T[]
   page: number
   totalPages: number
   onPageChange: (page: number) => void
@@ -85,7 +85,7 @@ export default function MobileTable({
                   <FaEdit className="w-5 h-5" />
                 </Link>
                 )}
-                <DeleteButton id={item.id} onDeleted={onDelete} />
+                <DeleteButton id={item.id} onDeleted={onDelete} tipo={"Cultivo"} />
 
               </div>
             </div>

@@ -17,6 +17,7 @@ const TopBarDesk: React.FC<TopBarDeskProps> = ({ query, setQuery, tipoBarra }) =
                 onChange={setQuery}
                 placeholder={`Buscar ${tipoBarra}...`}
             />}
+            
             <Link
                 href={`/dashboard/${tipoBarra}s/create`}
                 className="px-5 py-2 rounded bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50"
