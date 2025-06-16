@@ -1,7 +1,7 @@
 
 import { FormWrapper } from '@/app/components/usuarios/FormWrapper';
 import { fetchUsuario } from '@/app/lib/api';
-import { updateUsuario, UpdateUsuarioResponse } from '@/app/lib/usuarios/editarUsuario';
+import { updateUsuario} from '@/app/lib/usuarios/editarUsuario';
 import { bebas_Neue } from '@/app/ui/fonts';
 import { Breadcrumbs } from 'anjrot-components';
 
@@ -20,9 +20,14 @@ const EditUsuarioPage = async ({ params }: PageProps) => {
       { label: "Editar Usuario", href: `/dashboard/usuarios/${id}/edit`, active: true }
     ];
 
-    const action = async (formData: FormData): Promise<UpdateUsuarioResponse> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const action = async (formData: FormData): Promise<any> => {
         'use server';
-        return updateUsuario(formData, id);
+        const result = await updateUsuario(formData, id);
+        return {
+            ...result,
+            message: result.message ?? '', // Ensure message is always a string
+        };
     };
     return (
         <main className="min-h-screen flex flex-col items-center justify-start px-4 py-8">

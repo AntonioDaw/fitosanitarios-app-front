@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
 import { FaHome, FaTruckLoading, FaLeaf } from 'react-icons/fa';
-import { Biohazard, LandPlot, Shield, SprayCan, Sprout, User } from 'lucide-react';
+import { Biohazard, LandPlot, Shield, SprayCan, Sprout } from 'lucide-react';
 
 const links = [
   {
@@ -56,13 +56,6 @@ const links = [
     icon: SprayCan,
     color: "text-yellow-400",
     showEver: true,
-  },
-  {
-    name: "Usuarios",
-    href: "/dashboard/usuarios",
-    icon: User,
-    color: "text-yellow-400",
-    showEver: true,
   }
 
 ];
@@ -71,34 +64,36 @@ const NavLinks = () => {
   const pathName = usePathname();
   const { data: session } = useSession();
   const role = session?.user?.role;
-  
 
   return (
-    <>
+    <nav className="flex flex-wrap w-full gap-1 md:flex-col md:gap-2">
       {links.map((linkItem, index) => {
         const LinkIcon = linkItem.icon;
 
-        
         if (role !== 'admin' && !linkItem.showEver) return null;
-
-        
-        
 
         return (
           <Link
             key={index}
             href={linkItem.href}
-            className={`flex h-[48px] grow items-center justify-center gap-2
-              rounded-md p-3 text-lg text-white font-bold hover:bg-slate-400 hover:text-white
-              md:flex-none md:justify-start md:p-2 md:px-3 ${pathName === linkItem.href ? 'bg-slate-500' : 'bg-slate-700'}`}
+            className={`
+              flex items-center justify-center gap-1
+              rounded-md px-2 py-2
+              w-1/4 h-10 text-white text-sm font-semibold
+              hover:bg-slate-400 hover:text-white
+
+              md:w-full md:h-[48px] md:justify-start md:px-3 md:py-2 md:text-lg
+              ${pathName === linkItem.href ? 'bg-slate-500' : 'bg-slate-700'}
+            `}
           >
-            <LinkIcon className={`h-6 w-6 ${linkItem.color}`} />
-            <p className='hidden md:block'>{linkItem.name}</p>
+            <LinkIcon className={`${linkItem.color} h-5 w-5 md:h-6 md:w-6`} />
+            <span className="hidden md:inline">{linkItem.name}</span>
           </Link>
         );
       })}
-    </>
+    </nav>
   );
 };
+
 
 export default NavLinks;

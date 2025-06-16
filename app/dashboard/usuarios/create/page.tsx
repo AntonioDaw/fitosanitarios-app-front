@@ -1,7 +1,7 @@
 
 
 import { FormWrapper } from "@/app/components/usuarios/FormWrapper";
-import { createUsuario, CreateUsuarioResponse } from "@/app/lib/usuarios/crearUsuario";
+import { createUsuario} from "@/app/lib/usuarios/crearUsuario";
 import { bebas_Neue } from "@/app/ui/fonts";
 import { Breadcrumbs } from "anjrot-components";
 
@@ -13,7 +13,8 @@ const AñadirUsuario = async () => {
         { label: "Usarios", href: "/dashboard/usuarios" },
         { label: "Crear Usuario", href: `/dashboard/usuarios/Crear`, active: true }
     ];
-     const action = async (formData: FormData): Promise<CreateUsuarioResponse> => {
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     const action = async (formData: FormData): Promise<any> => {
                 'use server';
                 return createUsuario(formData);
             };
