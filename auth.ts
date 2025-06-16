@@ -23,7 +23,7 @@ export const authOptions = ({
         const { email, password } = parseCredentials.data;
 
         try {
-          const login = await fetch(`${process.env.LARAVEL_API_URL}/api/login`, {
+          const login = await fetch(`https://merry-art-production.up.railway.app/api/login`, {
             headers: {
               "Content-Type": "application/json"
             },
