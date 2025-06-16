@@ -116,3 +116,11 @@ export interface UnidadProductoAplicada {
     nombre: string;
   };
 }
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  password: string
+  role: string
+}

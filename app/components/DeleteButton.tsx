@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { FaTrash } from 'react-icons/fa';
-import { deleteAplicacion, deleteCultivo, deleteParcela, deleteProducto, deleteSector } from '../lib/api';
+import { deleteAplicacion, deleteCultivo, deleteParcela, deleteProducto, deleteSector, deleteUsuario } from '../lib/api';
 import ConfirmModal from './ConfirmarModal';
 
 type DeleteButtonProps = {
@@ -30,6 +30,9 @@ export default function DeleteButton({ id, onDeleted, className, tipo }: DeleteB
     }
     if (tipo === 'Aplicacion') {
       await deleteAplicacion(id);
+    }
+    if (tipo === 'Usuario') {
+      await deleteUsuario(id);
     }
 
     setShowModal(false);

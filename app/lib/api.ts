@@ -1,6 +1,7 @@
 'use server'
 import { auth } from "@/auth";
-import { Tipo, Sector, Cultivo, Tratamiento, Producto, Parcela, Aplicacion } from "../types";
+import { Tipo, Sector, Cultivo, Tratamiento, Producto, Parcela, Aplicacion, User} from "../types";
+import toast from "react-hot-toast";
 
 /** Obtiene los headers con el token actual del usuario */
 export const getHeaders = async () => {
@@ -48,6 +49,7 @@ export const fetchTableData = async (tipoId: number): Promise<Sector[]> => {
     return [];
   }
 };
+
 
 export const fetchTableCultivo = async (query?: string, currentPage?: number) => {
   try {
@@ -124,6 +126,21 @@ export const deleteAplicacion = async (id: number) => {
     console.error('Error al borrar la aplicación:', error);
   }
 };
+
+export const deleteUsuario = async (id: number) => {
+  const session = await auth();
+  const Userid = session?.user?.id;
+  if (Number(Userid) !== id) {
+    try {
+      await fetchWithAuth(`http://localhost/api/usuarios/${id}`, { method: 'DELETE' });
+    } catch (error) {
+      console.error('Error al borrar usuario:', error);
+    }
+  }else{
+     toast.error('No puedes eliminar tu propio usuario');
+  }
+};
+
 
 export const plantarCultivo = async (cultivoId: number, sectorId: number) => {
   const headers = await getHeaders();
@@ -322,3 +339,38 @@ export async function accionAplicacion(id: number, accion: 'aprobar' | 'rechazar
   return await res.json();
 }
 
+export const fetchTableUsers = async (query?: string, currentPage?: number) => {
+  try {
+const headers = await getHeaders()
+    let url = `http://localhost/api/usuarios`;
+    console.log(url);
+    const params = new URLSearchParams();
+
+    if (query) params.append('search', query);
+    if (currentPage) params.append('page', currentPage.toString());
+
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    const response = await fetch(url, {
+      method: 'GET',
+      headers
+    });
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    return [];
+  }
+};
+
+export const fetchUsuario = async (Id: number): Promise<User> => {
+  try {
+    const response = await fetchWithAuth(`http://localhost/api/usuarios/${Id}`);
+    const result = await response.json();
+    return result.data as User;
+  } catch (error) {
+    console.error('Error al obtener parcela:', error);
+    return {} as User;
+  }
+};

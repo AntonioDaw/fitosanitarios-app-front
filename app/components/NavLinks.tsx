@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
 import { FaHome, FaTruckLoading, FaLeaf } from 'react-icons/fa';
-import { Biohazard, LandPlot, Shield, SprayCan, Sprout } from 'lucide-react';
+import { Biohazard, LandPlot, Shield, SprayCan, Sprout, User } from 'lucide-react';
 
 const links = [
   {
@@ -54,6 +54,13 @@ const links = [
     name: "Aplicaciones",
     href: "/dashboard/aplicaciones",
     icon: SprayCan,
+    color: "text-yellow-400",
+    showEver: true,
+  },
+  {
+    name: "Usuarios",
+    href: "/dashboard/usuarios",
+    icon: User,
     color: "text-yellow-400",
     showEver: true,
   }
