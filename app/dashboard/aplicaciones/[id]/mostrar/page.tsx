@@ -4,11 +4,11 @@ import { bebas_Neue } from '@/app/ui/fonts';
 import { Breadcrumbs } from 'anjrot-components';
 import { redirect } from 'next/navigation';
 
-type PageProps = {
+const AplicacionShow = async ({
+  params,
+}: {
   params: { id: string };
-};
-
-const AplicacionShow = async ({ params }: PageProps) => {
+}) => {
   const id = Number(params.id);
 
   const breadCrumbs = [
