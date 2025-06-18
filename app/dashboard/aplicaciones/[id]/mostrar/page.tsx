@@ -5,22 +5,23 @@ import { Breadcrumbs } from 'anjrot-components';
 import { redirect } from 'next/navigation';
 
 type PageProps = {
-  params: { id: number };
+  params: { id: string };
 };
 
-
-
 const AplicacionShow = async ({ params }: PageProps) => {
-  const { id } = await params;
+  const id = Number(params.id);
+
   const breadCrumbs = [
     { label: "Aplicacion", href: "/dashboard/aplicaciones" },
     { label: "Mostrar aplicacion", href: `/dashboard/aplicaciones/${id}/mostrar`, active: true }
-
   ];
-  const aplicacion = await fetchAplicacion(params.id);
+
+  const aplicacion = await fetchAplicacion(id);
+
   if (!aplicacion.id) {
     redirect('/dashboard/aplicaciones');
   }
+
   return (
     <main>
       <Breadcrumbs
