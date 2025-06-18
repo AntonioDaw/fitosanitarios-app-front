@@ -91,7 +91,7 @@ export default function FormAplicaciones({
                     )}
                 </div>
             ) : (
-                <input type="hidden" name="usuario" value={2} />
+                <input type="hidden" name="usuario" value={idUser} />
             )}
 
             {/* Litros */}
