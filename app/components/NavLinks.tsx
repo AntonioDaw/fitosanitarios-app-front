@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
 import { FaHome, FaTruckLoading, FaLeaf } from 'react-icons/fa';
-import { Biohazard, LandPlot, Shield, SprayCan, Sprout, User, User2Icon, UserCheck } from 'lucide-react';
+import { Biohazard, LandPlot, Shield, SprayCan, Sprout, User} from 'lucide-react';
 
 const links = [
   {
