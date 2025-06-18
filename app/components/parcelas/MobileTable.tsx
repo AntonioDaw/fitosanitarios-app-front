@@ -68,7 +68,7 @@ export default function MobileTable({
               <div className="mt-6 flex justify-center align-middle gap-4">
                 <Link
                   className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-1 px-4 rounded transition"
-                  href={`dashboard/cultivos/${item.id}/edit`}
+                  href={`dashboard/parcelas/${item.id}/edit`}
                 >
                   <FaEdit className="w-5 h-5" />
                 </Link>

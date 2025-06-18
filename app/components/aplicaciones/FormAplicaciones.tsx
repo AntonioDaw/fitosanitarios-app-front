@@ -81,8 +81,8 @@ export default function FormAplicaciones({
                         className="mt-1 block w-full px-4 py-2 border rounded"
                         required
                     >
-                        <option value="1">Perito</option>
-                        <option value="2">Trabajador</option>
+                        <option value="1">Jesus</option>
+                        <option value="2">Mario</option>
                     </select>
                     {state?.success === false && state.errors?.user_id && (
                         <p className="text-red-600 mt-1 text-sm">
@@ -91,7 +91,7 @@ export default function FormAplicaciones({
                     )}
                 </div>
             ) : (
-                <input type="hidden" name="usuario" value={idUser} />
+                <input type="hidden" name="usuario" value={2} />
             )}
 
             {/* Litros */}
